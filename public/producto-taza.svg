@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#d8aa76"/>
+  <circle cx="530" cy="350" r="280" fill="#d8ff57"/>
+  <ellipse cx="600" cy="670" rx="260" ry="35" fill="#715b48" opacity=".25"/>
+  <path d="M430 220h310v300c0 105-60 150-155 150S430 625 430 520V220Z" fill="#db6847"/>
+  <path d="M740 305h75c80 0 115 55 115 120s-35 120-115 120h-75v-55h65c43 0 65-27 65-65s-22-65-65-65h-65v-55Z" fill="#db6847"/>
+  <ellipse cx="585" cy="225" rx="155" ry="28" fill="#8b3929"/>
+  <text x="585" y="465" text-anchor="middle" font-family="Arial, sans-serif" font-size="150" font-weight="700" fill="#f4efe4">N</text>
+</svg>
