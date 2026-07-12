@@ -46,6 +46,7 @@ export async function POST(request) {
     });
     const preferenceClient = new Preference(client);
     const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin).replace(/\/$/, "");
+    const isPublicUrl = !/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(baseUrl);
 
     const preference = await preferenceClient.create({
       body: {
@@ -60,8 +61,10 @@ export async function POST(request) {
           pending: `${baseUrl}/resultado/pendiente`,
           failure: `${baseUrl}/resultado/rechazado`,
         },
-        notification_url: `${baseUrl}/api/webhooks/mercadopago?source_news=webhooks`,
-        auto_return: "approved",
+        ...(isPublicUrl && {
+          notification_url: `${baseUrl}/api/webhooks/mercadopago?source_news=webhooks`,
+          auto_return: "approved",
+        }),
         statement_descriptor: "NOMADA STORE",
         metadata: { product_id: PRODUCT.id, quantity: 1 },
       },
