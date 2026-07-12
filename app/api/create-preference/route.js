@@ -2,10 +2,10 @@ import { MercadoPagoConfig, Preference } from "mercadopago";
 import { NextResponse } from "next/server";
 
 const PRODUCT = {
-  id: "4827",
-  title: "Taza Nómada",
-  description: "Dispositivo de tienda móvil de comercio electrónico",
-  unit_price: 79.9,
+  id: "1001",
+  title: "Ventilador 5 velocidades",
+  description: "Ventilador práctico de 5 velocidades, ideal para refrescar tu casa, oficina o negocio.",
+  unit_price: 100,
   currency_id: "PEN",
 };
 
@@ -13,7 +13,6 @@ export async function POST(request) {
   try {
     const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
     const integratorId = process.env.MERCADOPAGO_INTEGRATOR_ID;
-    const payerEmail = process.env.MERCADOPAGO_ACCOUNT_EMAIL;
 
     if (!accessToken) {
       return NextResponse.json(
@@ -27,17 +26,11 @@ export async function POST(request) {
         { status: 503 }
       );
     }
-    if (!payerEmail || !payerEmail.includes("@")) {
-      return NextResponse.json(
-        { error: "Configura MERCADOPAGO_ACCOUNT_EMAIL con el correo de tu cuenta" },
-        { status: 503 }
-      );
-    }
 
     const payload = await request.json();
     const quantity = Number(payload.quantity);
-    if (quantity !== 1) {
-      return NextResponse.json({ error: "La certificación requiere cantidad 1" }, { status: 400 });
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) {
+      return NextResponse.json({ error: "La cantidad debe estar entre 1 y 10" }, { status: 400 });
     }
 
     const client = new MercadoPagoConfig({
@@ -50,12 +43,8 @@ export async function POST(request) {
 
     const preference = await preferenceClient.create({
       body: {
-        items: [{ ...PRODUCT, picture_url: `${baseUrl}/producto-taza.svg`, quantity: 1 }],
-        payment_methods: {
-          excluded_payment_methods: [{ id: "visa" }],
-          installments: 6,
-        },
-        external_reference: payerEmail,
+        items: [{ ...PRODUCT, picture_url: `${baseUrl}/producto-taza.svg`, quantity }],
+        external_reference: `VENTILADOR-5V-${Date.now()}`,
         back_urls: {
           success: `${baseUrl}/resultado/aprobado`,
           pending: `${baseUrl}/resultado/pendiente`,
@@ -65,8 +54,8 @@ export async function POST(request) {
           notification_url: `${baseUrl}/api/webhooks/mercadopago?source_news=webhooks`,
           auto_return: "approved",
         }),
-        statement_descriptor: "NOMADA STORE",
-        metadata: { product_id: PRODUCT.id, quantity: 1 },
+        statement_descriptor: "VENTIFAN",
+        metadata: { product_id: PRODUCT.id, quantity },
       },
     });
 

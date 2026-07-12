@@ -7,10 +7,10 @@ const publicKey = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY;
 if (publicKey) initMercadoPago(publicKey, { locale: "es-PE" });
 
 const product = {
-  id: "4827",
-  title: "Taza Nómada",
-  description: "Dispositivo de tienda móvil de comercio electrónico",
-  price: 79.9,
+  id: "1001",
+  title: "Ventilador 5 velocidades",
+  description: "Ventilador práctico de 5 velocidades, ideal para refrescar tu casa, oficina o negocio.",
+  price: 100,
 };
 
 const money = new Intl.NumberFormat("es-PE", {
@@ -25,7 +25,7 @@ export default function Home() {
   const [preferenceId, setPreferenceId] = useState("");
 
   function changeQuantity(nextQuantity) {
-    setQuantity(Math.max(0, nextQuantity));
+    setQuantity(Math.min(10, Math.max(0, nextQuantity)));
     setPreferenceId("");
     setError("");
   }
@@ -55,28 +55,33 @@ export default function Home() {
   return (
     <main>
       <nav className="nav">
-        <a className="brand" href="#">NÓMADA<span>®</span></a>
+        <a className="brand" href="#">VENTIFAN<span>®</span></a>
         <div className="cart-pill">Carrito <strong>{quantity}</strong></div>
       </nav>
 
       <section className="hero">
-        <div className="eyebrow">EDICIÓN DE ESTUDIO · 01</div>
-        <div className="product-visual" aria-label="Ilustración de una taza color terracota">
+        <div className="eyebrow">VENTILACIÓN PARA TU DÍA</div>
+        <div className="product-visual" aria-label="Ilustración de un ventilador">
           <div className="sun" />
-          <div className="mug"><div className="mug-mark">N</div></div>
+          <div className="fan">
+            <div className="fan-blades"><span /><span /><span /></div>
+            <div className="fan-center" />
+            <div className="fan-stand" />
+            <div className="fan-base" />
+          </div>
           <div className="shadow" />
-          <span className="scribble">hecha para<br />seguir creando</span>
+          <span className="scribble">5 velocidades<br />más frescura</span>
         </div>
 
         <div className="product-copy">
-          <div className="badge">NUEVO</div>
+          <div className="badge">DISPONIBLE</div>
           <h1>{product.title}</h1>
           <p>{product.description}</p>
           <div className="price">{money.format(product.price)}</div>
-          <button className="primary" disabled={quantity === 1} onClick={() => changeQuantity(1)}>
-            {quantity === 1 ? "Producto agregado" : "Agregar al carrito"} <span>{quantity === 1 ? "✓" : "+"}</span>
+          <button className="primary" disabled={quantity > 0} onClick={() => changeQuantity(1)}>
+            {quantity > 0 ? "Producto agregado" : "Agregar al carrito"} <span>{quantity > 0 ? "✓" : "+"}</span>
           </button>
-          <div className="details"><span>↗ Envío nacional</span><span>◌ Pago seguro</span></div>
+          <div className="details"><span>↗ Entrega coordinada</span><span>◌ Pago seguro con Mercado Pago</span></div>
         </div>
       </section>
 
@@ -87,15 +92,15 @@ export default function Home() {
         </div>
 
         {quantity === 0 ? (
-          <div className="empty">Tu carrito está esperando una buena idea.</div>
+          <div className="empty">Tu carrito está vacío. Agrega tu ventilador para continuar.</div>
         ) : (
           <div className="cart-card">
-            <div className="mini-mug">N</div>
+            <div className="mini-fan">✺</div>
             <div className="item-info"><strong>{product.title}</strong><span>{money.format(product.price)} c/u</span></div>
             <div className="stepper">
-              <button aria-label="Quitar producto" onClick={() => changeQuantity(0)}>−</button>
+              <button aria-label="Reducir cantidad" onClick={() => changeQuantity(quantity - 1)}>−</button>
               <span>{quantity}</span>
-              <button aria-label="Cantidad máxima alcanzada" disabled>+</button>
+              <button aria-label="Aumentar cantidad" disabled={quantity >= 10} onClick={() => changeQuantity(quantity + 1)}>+</button>
             </div>
             <div className="total"><span>Total</span><strong>{money.format(product.price * quantity)}</strong></div>
             {!preferenceId && (
@@ -120,7 +125,7 @@ export default function Home() {
         )}
       </section>
 
-      <footer><span>NÓMADA STORE</span><span>Integración Checkout Pro · Mercado Pago</span></footer>
+      <footer><span>VENTIFAN STORE</span><span>Pagos seguros con Mercado Pago</span></footer>
     </main>
   );
 }
